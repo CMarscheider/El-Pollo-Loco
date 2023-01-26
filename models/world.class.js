@@ -5,7 +5,9 @@ class World {
   ctx;
   keyboard;
   camera_x = 0;
-  statusBar = new StatusBar();
+  StatusbarHealth = new StatusbarHealth();
+  StatusbarCoins = new StatusbarCoins();
+  StatusbarBottles = new StatusbarBottles();
 
   constructor(canvas) {
     this.ctx = canvas.getContext("2d");
@@ -17,7 +19,7 @@ class World {
     this.checkCollisions();
   }
 
-  /*     generateBackgroundObject() { übergeben ab level.class
+  /*     generateBackgroundObject() { übergeben an level.class
             let imageNumber = 1;
             for (let i = -719; i < 2158; i += 719) {
                 if (imageNumber > 2) {
@@ -41,11 +43,16 @@ class World {
 
     this.ctx.translate(-this.camera_x, 0); /* Kamera zurückschieben */
     //?Space for fixes Objects  */
-    this.addToMap(this.statusBar);
+    this.addToMap(this.StatusbarHealth);
+    this.addToMap(this.StatusbarCoins);
+    this.addToMap(this.StatusbarBottles);
+
     this.ctx.translate(this.camera_x, 0); /* Kamera nach vorne schieben */
 
     this.addObjectsToMap(this.level.clouds);
     this.addObjectsToMap(this.level.enemies);
+    this.addObjectsToMap(this.level.coins);
+    this.addObjectsToMap(this.level.bottles);
 
     this.ctx.translate(-this.camera_x, 0);
 
@@ -95,9 +102,44 @@ class World {
       this.level.enemies.forEach((enemy) => {
         if (this.character.isColliding(enemy)) {
           this.character.hit();
-          this.statusBar.setPercentage(this.character.energy);
+          this.StatusbarHealth.setPercentage(this.character.energy);
         }
       });
-    }, 200);
+
+      this.level.coins.forEach((coin) => {
+        if (this.character.isColliding(coin)) {
+          this.coinCollected(coin);
+          this.addCoin();
+          this.StatusbarCoins.setPercentage(this.character.coins);
+        }
+      });
+
+      this.level.bottles.forEach((bottle) => {
+        if (this.character.isColliding(bottle)) {
+          this.coinCollected(bottle);
+          this.addBottle();
+          this.StatusbarBottles.setPercentage(this.character.bottles);
+        }
+      });
+    }, 100);
+  }
+
+  coinCollected(item) {
+    if (item instanceof Coin) {
+      let i = this.level.coins.indexOf(item);
+      this.level.coins.splice(i, 1);
+    }
+    if (item instanceof Bottle) {
+      let i = this.level.bottles.indexOf(item);
+      this.level.bottles.splice(i, 1);
+    }
+  }
+
+  addCoin() {
+    this.character.coins += 10;
+  }
+
+  addBottle(){
+    this.character.bottles += 10;
   }
 }
