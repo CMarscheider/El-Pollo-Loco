@@ -14,6 +14,6 @@ class StatusbarBottles extends Statusbar {
     constructor () {
         super();
         this.loadImages(this.IMAGES);
-        this.setPercentage(100);
+        this.setPercentage(0);
     }
 }

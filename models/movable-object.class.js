@@ -19,7 +19,11 @@ class MovableObject extends DrawableObject {
   }
 
   isAboveGround() {
-    return this.y < this.groundPosition;
+    if (this instanceof ThrowableObject) {
+      return true;
+    } else {
+      return this.y < this.groundPosition;
+    }
   }
 
   moveRight() {
