@@ -36,8 +36,12 @@ class Character extends MovableObject {
     "img/2_character_pepe/4_hurt/H-42.png",
     "img/2_character_pepe/4_hurt/H-43.png",
   ];
+  IMAGE_ENDSCREEN = ["img/9_intro_outro_screens/game_over/game over.png"];
   world;
-  walking_sound = new Audio("audio/walking.mp3");
+  walking_sound = new Audio("audio/walking3.mp3");
+  jump_sound = new Audio("audio/jump.wav");
+  hurt_sound = new Audio("audio/hurt.wav");
+
   walking = false;
   coins = 0;
   bottles = 0;
@@ -47,7 +51,7 @@ class Character extends MovableObject {
     right: 20,
     left: 20,
   };
-  
+
   constructor() {
     super().loadImage("img/2_character_pepe/1_idle/idle/I-1.png");
     this.loadImages(this.IMAGES_WALKING);
@@ -60,8 +64,6 @@ class Character extends MovableObject {
 
   animate() {
     setInterval(() => {
-      /* this.playWalkingSound(); */ //TODO: auskommentiert, weil sonst beim springen der ton kommt ton muss noch gefixt werden in den if-abfragen geht die funktion nicht */;
-
       if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
         this.otherDirection = false;
         this.moveRight();
@@ -77,6 +79,7 @@ class Character extends MovableObject {
 
       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
         this.jump();
+        world.playSound(this.jump_sound);
       }
 
       this.world.camera_x = -this.x + 200; //! Position der Kamera + 100 damit Pepe weiter rechts steht */
@@ -88,6 +91,7 @@ class Character extends MovableObject {
         //! Sterben animation */
       } else if (this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT);
+        world.playSound(this.hurt_sound)
       } else if (this.isAboveGround()) {
         //! Jump animation */
         this.playAnimation(this.IMAGES_JUMPING);
@@ -100,13 +104,12 @@ class Character extends MovableObject {
     }, 100);
   }
 
-  playWalkingSound() {
-    if (
-      this.world.keyboard.LEFT ||
-      (this.world.keyboard.RIGHT && this.walking == false)
-    ) {
+  async playWalkingSound() {
+    if (this.walking == false && !this.isAboveGround()) {
       this.walking = true;
-      this.walking_sound.play();
+      await world.playSound(this.walking_sound);
+
+      /* await this.walking_sound.play(); */
       this.walking = false;
     } else {
       this.walking_sound.pause();

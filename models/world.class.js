@@ -9,6 +9,9 @@ class World {
   StatusbarCoins = new StatusbarCoins();
   StatusbarBottles = new StatusbarBottles();
   throwableObjects = [];
+  collectCoinSound = new Audio("audio/collectcoin.wav");
+  collectBottleSound = new Audio("audio/collectbottle.wav");
+  timeout = true;
 
   constructor(canvas) {
     this.ctx = canvas.getContext("2d");
@@ -41,6 +44,7 @@ class World {
     this.ctx.translate(this.camera_x, 0);
     this.addObjectsToMap(this.level.backgroundObjects);
     this.addToMap(this.character);
+    this.addObjectsToMap(this.level.clouds);
 
     this.ctx.translate(-this.camera_x, 0); /* Kamera zurückschieben */
     //?Space for fixed Objects  */
@@ -50,7 +54,6 @@ class World {
 
     this.ctx.translate(this.camera_x, 0); /* Kamera nach vorne schieben */
 
-    this.addObjectsToMap(this.level.clouds);
     this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.level.coins);
     this.addObjectsToMap(this.level.bottles);
@@ -108,16 +111,25 @@ class World {
     }, 100);
   }
 
+checkThrowBottle() {
+      if (this.keyboard.D && this.character.bottles >= 0 && this.timeout == true) {
+        this.timeout = false;
+        this.throwBottle();
+      }
 
 
-  
-  checkThrowBottle() {
-    if (this.keyboard.D && this.character.bottles >= 0) {
+  }
+
+throwBottle() {
+    setTimeout(() => {
       let bottle = new ThrowableObject(this.character.x, this.character.y);
       this.throwableObjects.push(bottle);
       this.removeBottle();
       this.StatusbarBottles.setPercentage(this.character.bottles);
-    }
+      this.timeout = true; 
+    }, 400);
+
+  
   }
 
   checkCollisionsWithEnemy() {
@@ -152,10 +164,12 @@ class World {
   collectedItem(item) {
     if (item instanceof Coin) {
       let i = this.level.coins.indexOf(item);
+      this.playSound(this.collectCoinSound);
       this.level.coins.splice(i, 1);
     }
     if (item instanceof Bottle) {
       let i = this.level.bottles.indexOf(item);
+      this.playSound(this.collectBottleSound);
       this.level.bottles.splice(i, 1);
     }
   }
@@ -170,5 +184,11 @@ class World {
 
   removeBottle() {
     this.character.bottles -= 10;
+  }
+
+  playSound(sound) {
+    if (soundActivated) {
+      sound.play();
+    }
   }
 }

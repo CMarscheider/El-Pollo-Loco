@@ -1,12 +1,62 @@
-body{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+@font-face {
+  font-family: "zabras";
+  src: url("fonts/zabars.ttf");
 }
 
-canvas{
-    background-color: black;
-    background-color: red;
-    background: green;
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "zabras";
+  background-image: url("img/background4.jpg");
+  background-position: center;
+  background-size: cover;
 }
 
+canvas {
+  background-color: black;
+  z-index: 1;
+}
+
+h1 {
+  font-size: 64px;
+  letter-spacing: 3px;
+}
+
+#startscreen {
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  height: 480px;
+  width: 720px;
+  top: 0;
+  left: 0;
+}
+
+.controls img {
+  width: 32px;
+  height: 32px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.controls {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  z-index: 999;
+}
+
+.gamebox {
+  position: relative;
+  width: 720px;
+  height: 480px;
+}
+
+.d-none {
+  display: none;
+}
+
+.fullscreen {
+width: 100% !important;
+height: 100% !important;
+}
