@@ -55,12 +55,31 @@ class MovableObject extends DrawableObject {
   }
 
   hit() {
-    this.energy -= 5;
+    if (this instanceof Character && !this.isHurt()) {
+      this.hitCharacter();
+    } else if (this instanceof Endboss && this.energy >= 0.5) {
+      this.hitEndboss();
+    } else if (this instanceof Chicken && this.energy > 80) {
+      this.hitChicken();
+    }
+
     if (this.energy < 0) {
       this.energy = 0;
     } else {
       this.lastHit = new Date().getTime();
     }
+  }
+
+  hitCharacter() {
+    this.energy -= 5;
+  }
+
+  hitEndboss() {
+    this.energy -= 20;
+  }
+
+  hitChicken() {
+    this.energy -= 100;
   }
 
   isDead() {

@@ -41,10 +41,10 @@ class Character extends MovableObject {
   walking_sound = new Audio("audio/walking3.mp3");
   jump_sound = new Audio("audio/jump.wav");
   hurt_sound = new Audio("audio/hurt.wav");
-
   walking = false;
   coins = 0;
   bottles = 0;
+  lastHeight = this.y;
   offset = {
     top: 100,
     bottom: 10,

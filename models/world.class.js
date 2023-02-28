@@ -17,27 +17,11 @@ class World {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
-    /* this.generateBackgroundObject(); Übergeben an level.class */
     this.draw();
     this.setWorld();
     this.run();
   }
 
-  /*     generateBackgroundObject() { übergeben an level.class
-            let imageNumber = 1;
-            for (let i = -719; i < 2158; i += 719) {
-                if (imageNumber > 2) {
-                    imageNumber = 1;
-                }
-                this.backgroundObjects.push(
-                    new BackgroundObject('img/5_background/layers/air.png', i),
-                    new BackgroundObject('img/5_background/layers/3_third_layer/' + imageNumber + '.png', i),
-                    new BackgroundObject('img/5_background/layers/2_second_layer/' + imageNumber + '.png', i),
-                    new BackgroundObject('img/5_background/layers/1_first_layer/' + imageNumber + '.png', i),
-                )
-                imageNumber++;
-            }
-        } */
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -111,32 +95,73 @@ class World {
     }, 100);
   }
 
-checkThrowBottle() {
-      if (this.keyboard.D && this.character.bottles >= 0 && this.timeout == true) {
-        this.timeout = false;
-        this.throwBottle();
-      }
-
-
+  checkThrowBottle() {
+    if (
+      this.keyboard.D &&
+      this.character.bottles >= 0 &&
+      this.timeout == true
+    ) {
+      this.timeout = false;
+      this.throwBottle();
+    }
   }
 
-throwBottle() {
+  throwBottle() {
     setTimeout(() => {
       let bottle = new ThrowableObject(this.character.x, this.character.y);
       this.throwableObjects.push(bottle);
       this.removeBottle();
       this.StatusbarBottles.setPercentage(this.character.bottles);
-      this.timeout = true; 
+      this.timeout = true;
     }, 400);
-
-  
   }
 
   checkCollisionsWithEnemy() {
     this.level.enemies.forEach((enemy) => {
-      if (this.character.isColliding(enemy)) {
+      this.enemieHurtCharacter(enemy);
+      this.hitByBottle(enemy);
+    });
+  }
+
+  enemieHurtCharacter(enemy) {
+    if (this.enemyAlive(enemy) && this.enemyCollidesWithChar(enemy)) {
+      if (this.enemyIsChicken(enemy) && !this.isJumping()) {
         this.character.hit();
         this.StatusbarHealth.setPercentage(this.character.energy);
+      } else {
+        this.jumpOnHead(enemy);
+      }
+    }
+  }
+
+  enemyAlive(enemy) {
+    return enemy.energy > 0;
+  }
+
+  enemyCollidesWithChar(enemy) {
+    return this.character.isColliding(enemy);
+  }
+
+  enemyIsChicken(enemy) {
+    return enemy instanceof Chicken;
+  }
+
+  isJumping() {
+    return this.character.isAboveGround();
+  }
+
+  jumpOnHead(enemy) {
+    enemy.hit();
+    this.character.speedY = 20;
+    this.character.lastHeight = this.character.y;
+    console.log(enemy, " wurde totgehüpft!");
+  }
+
+  hitByBottle(enemy) {
+    this.throwableObjects.forEach((bottle) => {
+      if (bottle.isColliding(enemy)) {
+        enemy.hit();
+        console.log(enemy, " wurde von Flasche getroffen!");
       }
     });
   }

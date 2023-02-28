@@ -97,6 +97,7 @@ function toggleFullscreen() {
     exitFullscreenMode(startscreen, screenicon);
   }
 }
+
 function enterFullscreen(gamebox, startscreen, screenicon) {
   gamebox.requestFullscreen();
   canvas.classList.add("fullscreen");
