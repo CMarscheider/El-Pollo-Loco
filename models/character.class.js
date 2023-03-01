@@ -44,7 +44,6 @@ class Character extends MovableObject {
   walking = false;
   coins = 0;
   bottles = 0;
-  lastHeight = this.y;
   offset = {
     top: 100,
     bottom: 10,

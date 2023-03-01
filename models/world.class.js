@@ -22,7 +22,6 @@ class World {
     this.run();
   }
 
-
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.translate(this.camera_x, 0);
@@ -113,6 +112,9 @@ class World {
       this.removeBottle();
       this.StatusbarBottles.setPercentage(this.character.bottles);
       this.timeout = true;
+/*       setTimeout(() => {
+        this.throwableObjects.splice(0, 1);
+      }, 3000); */ //TODO:Flasche Entfernen bei Aufprall!!
     }, 400);
   }
 
@@ -153,17 +155,29 @@ class World {
   jumpOnHead(enemy) {
     enemy.hit();
     this.character.speedY = 20;
-    this.character.lastHeight = this.character.y;
     console.log(enemy, " wurde totgehüpft!");
+    this.removeChicken(enemy);
   }
 
   hitByBottle(enemy) {
     this.throwableObjects.forEach((bottle) => {
       if (bottle.isColliding(enemy)) {
         enemy.hit();
+        bottle.hitEnemy = true;
         console.log(enemy, " wurde von Flasche getroffen!");
+        this.removeChicken(enemy);
       }
     });
+  }
+
+  removeChicken(enemy) {
+    if (this.enemyIsChicken(enemy)) {
+      this.playSound(enemy.soundDied);
+      setTimeout(() => {
+        let i = this.level.enemies.indexOf(enemy);
+        this.level.enemies.splice(i, 1);
+      }, 1000);
+    }
   }
 
   checkCollisionsWithCoin() {

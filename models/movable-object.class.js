@@ -59,6 +59,7 @@ class MovableObject extends DrawableObject {
       this.hitCharacter();
     } else if (this instanceof Endboss && this.energy >= 0.5) {
       this.hitEndboss();
+      console.log("Boss wurde getroffen");
     } else if (this instanceof Chicken && this.energy > 80) {
       this.hitChicken();
     }
@@ -71,11 +72,11 @@ class MovableObject extends DrawableObject {
   }
 
   hitCharacter() {
-    this.energy -= 5;
+    this.energy -= 10;
   }
 
   hitEndboss() {
-    this.energy -= 20;
+    this.energy -= 12;
   }
 
   hitChicken() {
