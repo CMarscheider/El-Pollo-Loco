@@ -15,6 +15,7 @@ class ThrowableObject extends MovableObject {
   ];
   groundPosition = 370;
   hitEnemy = false;
+  
   constructor(x, y) {
     super().loadImage("img/6_salsa_bottle/salsa_bottle.png");
     this.loadImages(this.IMAGES_SPLASH);
@@ -29,18 +30,23 @@ class ThrowableObject extends MovableObject {
   throw() {
     this.speedY = 30;
     this.applyGravity();
-    setInterval(() => {
+    setStoppableInterval(() => {
       this.x += 8;
     }, 25);
   }
 
   animate() {
-    setInterval(() => {
-      this.playAnimation(this.IMAGES_THROW);
-      if (this.hitEnemy || !this.isAboveGround()) {
-        /* this.speedY = -50; */
-        this.playAnimation(this.IMAGES_SPLASH);
-      }
-    }, 100);
+    setStoppableInterval(() => this.animateBottle(), 100);
+  }
+
+  animateBottle() {
+    this.playAnimation(this.IMAGES_THROW);
+    if (this.bottleHit()) {
+      this.playAnimation(this.IMAGES_SPLASH);
+    }
+  }
+
+  bottleHit() {
+    return this.hitEnemy || !this.isAboveGround();
   }
 }

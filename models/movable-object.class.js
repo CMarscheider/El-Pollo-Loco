@@ -8,7 +8,7 @@ class MovableObject extends DrawableObject {
   lastHit = 0;
 
   applyGravity() {
-    setInterval(() => {
+    setStoppableInterval(() => {
       if (this.isAboveGround() || this.speedY > 0) {
         this.y -= this.speedY;
         this.speedY -= this.acceleration;
@@ -59,11 +59,13 @@ class MovableObject extends DrawableObject {
       this.hitCharacter();
     } else if (this instanceof Endboss && this.energy >= 0.5) {
       this.hitEndboss();
-      console.log("Boss wurde getroffen");
     } else if (this instanceof Chicken && this.energy > 80) {
       this.hitChicken();
     }
+    this.timestampLastHit();
+  }
 
+  timestampLastHit() {
     if (this.energy < 0) {
       this.energy = 0;
     } else {
@@ -72,11 +74,11 @@ class MovableObject extends DrawableObject {
   }
 
   hitCharacter() {
-    this.energy -= 10;
+    this.energy -= 20;
   }
 
   hitEndboss() {
-    this.energy -= 12;
+    this.energy -= 6;
   }
 
   hitChicken() {

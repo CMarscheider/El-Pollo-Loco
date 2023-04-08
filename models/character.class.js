@@ -36,7 +36,30 @@ class Character extends MovableObject {
     "img/2_character_pepe/4_hurt/H-42.png",
     "img/2_character_pepe/4_hurt/H-43.png",
   ];
-  IMAGE_ENDSCREEN = ["img/9_intro_outro_screens/game_over/game over.png"];
+  IMAGES_SLEEPING = [
+    "img/2_character_pepe/1_idle/long_idle/I-11.png",
+    "img/2_character_pepe/1_idle/long_idle/I-12.png",
+    "img/2_character_pepe/1_idle/long_idle/I-13.png",
+    "img/2_character_pepe/1_idle/long_idle/I-14.png",
+    "img/2_character_pepe/1_idle/long_idle/I-15.png",
+    "img/2_character_pepe/1_idle/long_idle/I-16.png",
+    "img/2_character_pepe/1_idle/long_idle/I-17.png",
+    "img/2_character_pepe/1_idle/long_idle/I-18.png",
+    "img/2_character_pepe/1_idle/long_idle/I-19.png",
+    "img/2_character_pepe/1_idle/long_idle/I-20.png",
+  ];
+  IMAGES_IDLE = [
+    "img/2_character_pepe/1_idle/idle/I-1.png",
+    "img/2_character_pepe/1_idle/idle/I-2.png",
+    "img/2_character_pepe/1_idle/idle/I-3.png",
+    "img/2_character_pepe/1_idle/idle/I-4.png",
+    "img/2_character_pepe/1_idle/idle/I-5.png",
+    "img/2_character_pepe/1_idle/idle/I-6.png",
+    "img/2_character_pepe/1_idle/idle/I-7.png",
+    "img/2_character_pepe/1_idle/idle/I-8.png",
+    "img/2_character_pepe/1_idle/idle/I-9.png",
+    "img/2_character_pepe/1_idle/idle/I-10.png",
+  ];
   world;
   walking_sound = new Audio("audio/walking3.mp3");
   jump_sound = new Audio("audio/jump.wav");
@@ -50,6 +73,7 @@ class Character extends MovableObject {
     right: 20,
     left: 20,
   };
+  idleTimeout = 0;
 
   constructor() {
     super().loadImage("img/2_character_pepe/1_idle/idle/I-1.png");
@@ -57,58 +81,118 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_JUMPING);
     this.loadImages(this.IMAGES_DEAD);
     this.loadImages(this.IMAGES_HURT);
+    this.loadImages(this.IMAGES_IDLE);
+    this.loadImages(this.IMAGES_SLEEPING);
     this.animate();
     this.applyGravity();
   }
 
   animate() {
-    setInterval(() => {
-      if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-        this.otherDirection = false;
-        this.moveRight();
-        this.playWalkingSound();
-      }
+    setStoppableInterval(() => this.moveCharacter(), 1000 / 60);
+    setStoppableInterval(() => this.animateCharater(), 100);
+  }
 
-      if (this.world.keyboard.LEFT && this.x > -400) {
-        //! -400 sagt aus wie weit die Figur nach links laufen kann
-        this.otherDirection = true;
-        this.moveLeft();
-        this.playWalkingSound();
-      }
+  animateCharater() {
+    if (this.isDead()) {
+      this.deadAnimation();
+    } else if (this.isHurt()) {
+      this.hurtAnimation();
+    } else if (this.isAboveGround()) {
+      this.jumpAnimation();
+    } else if (this.isMoving()) {
+      this.walkAnimation();
+    } else if (this.noKeyIsPressed()) {
+      this.characterIdle();
+    }
+  }
 
-      if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-        this.jump();
-        world.playSound(this.jump_sound);
-      }
+  deadAnimation() {
+    this.playAnimation(this.IMAGES_DEAD);
+    this.idleTimeout = 0;
+  }
 
-      this.world.camera_x = -this.x + 200; //! Position der Kamera + 100 damit Pepe weiter rechts steht */
-    }, 1000 / 60);
+  hurtAnimation() {
+    this.playAnimation(this.IMAGES_HURT);
+    this.idleTimeout = 0;
+    world.playSound(this.hurt_sound);
+  }
 
-    setInterval(() => {
-      if (this.isDead()) {
-        this.playAnimation(this.IMAGES_DEAD);
-        //! Sterben animation */
-      } else if (this.isHurt()) {
-        this.playAnimation(this.IMAGES_HURT);
-        world.playSound(this.hurt_sound)
-      } else if (this.isAboveGround()) {
-        //! Jump animation */
-        this.playAnimation(this.IMAGES_JUMPING);
-      } else {
-        if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-          //! Walk animation */
-          this.playAnimation(this.IMAGES_WALKING);
-        }
-      }
-    }, 100);
+  jumpAnimation() {
+    this.playAnimation(this.IMAGES_JUMPING);
+    this.idleTimeout = 0;
+  }
+
+  walkAnimation() {
+    this.playAnimation(this.IMAGES_WALKING);
+    this.idleTimeout = 0;
+  }
+
+  characterIdle() {
+    this.playAnimation(this.IMAGES_IDLE);
+    this.idleTimeout += 150;
+    if (this.idleTimeout >= 5000) {
+      this.playAnimation(this.IMAGES_SLEEPING);
+    }
+  }
+
+  isMoving() {
+    return this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
+  }
+
+  moveCharacter() {
+    if (this.canMoveRight()) {
+      this.moveCharacterRight();
+    }
+    if (this.canMoveLeft()) {
+      this.moveCharacterLeft();
+    }
+    if (this.canJump()) {
+      this.jump();
+      world.playSound(this.jump_sound);
+    }
+    this.world.camera_x = -this.x + 200; //! Position der Kamera + 200 damit Pepe weiter rechts steht */
+  }
+
+  moveCharacterRight() {
+    this.otherDirection = false;
+    this.moveRight();
+    this.playWalkingSound();
+  }
+
+  moveCharacterLeft() {
+    this.otherDirection = true;
+    this.moveLeft();
+    this.playWalkingSound();
+  }
+
+  canMoveLeft() {
+    //! -400 sagt aus wie weit die Figur nach links laufen kann
+    return this.world.keyboard.LEFT && this.x > -400;
+  }
+
+  canMoveRight() {
+    return this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x;
+  }
+
+  canJump() {
+    return this.world.keyboard.SPACE && !this.isAboveGround();
+  }
+
+  noKeyIsPressed() {
+    return (
+      !this.world.keyboard.RIGHT &&
+      !this.world.keyboard.LEFT &&
+      !this.world.keyboard.UP &&
+      !this.world.keyboard.DOWN &&
+      !this.world.keyboard.SPACE &&
+      !this.world.keyboard.D
+    );
   }
 
   async playWalkingSound() {
     if (this.walking == false && !this.isAboveGround()) {
       this.walking = true;
       await world.playSound(this.walking_sound);
-
-      /* await this.walking_sound.play(); */
       this.walking = false;
     } else {
       this.walking_sound.pause();
