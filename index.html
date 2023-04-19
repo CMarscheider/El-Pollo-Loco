@@ -53,30 +53,37 @@
     <div id="gamebox" class="gamebox">
         <img src="img/9_intro_outro_screens/start/startscreen_1.png" alt="startscreen" id="startscreen">
         <img src="img/9_intro_outro_screens/game_over/game_over!.png" alt="startscreen" id="endscreen" class="d-none">
+        <div class="d-none infocontainer" id="infocontainer">
+            <img src="img/cross.png" alt="close" id="closeBtn"  onclick="toggleInfo('true')">
+            <p>Press left and right arrow to run</p>
+            <p>Press space to jump</p>
+            <p>Press d to throw bottles</p>
+        </div>
 
-            <div id="play-btns-container" class="play-btns-container">
+        <div id="play-btns-container" class="d-none play-btns-container">
 
-                <div class="play-btns">
-                    <div class="d-flex">
-                        <button id="btn-left" class="btn play-btn btn-circle">
-                            <img src="./img/arrow-left.png" alt="move left" class="img"></button>
-                        <button id="btn-right" class="btn play-btn btn-circle">
-                            <img src="./img/arrow-right.png" alt="move right" class="img"></button>
-                    </div>
-                    <div class="d-flex">
-                        <button id="btn-jump" class="btn play-btn btn-circle">
-                            <img src="./img/arrow-up.png" alt="jump" class="img"></button>
-                        <button id="btn-throw" class="btn play-btn btn-circle">
-                            <img src="./img/throw.png" alt="throw" class="img"></button>
-                    </div>
+            <div class="play-btns">
+                <div class="d-flex">
+                    <button id="btn-left" class="btn play-btn btn-circle">
+                        <img src="./img/arrow-left.png" alt="move left" class="img"></button>
+                    <button id="btn-right" class="btn play-btn btn-circle">
+                        <img src="./img/arrow-right.png" alt="move right" class="img"></button>
                 </div>
+                <div class="d-flex">
+                    <button id="btn-jump" class="btn play-btn btn-circle">
+                        <img src="./img/arrow-up.png" alt="jump" class="img"></button>
+                    <button id="btn-throw" class="btn play-btn btn-circle">
+                        <img src="./img/throw.png" alt="throw" class="img"></button>
                 </div>
+            </div>
+        </div>
 
         <div id="startBtn" class="btn start-btn" onclick="playOrPause()">Start</div>
         <div id="restartBtn" class="btn start-btn d-none" onclick="playOrPause()">Restart</div>
         <div class="controls">
             <img src="./img/loud.png" alt="mute" id="sound" onclick="muteOrUnmute()">
             <img src="./img/fullscreen.png" alt="enter fullscreen" id="size" onclick="toggleFullscreen()">
+            <img src="./img/info-button.png" alt="info" id="size" onclick="toggleInfo('false')">
         </div>
         <canvas id="canvas" width="720" height="480"></canvas>
 

@@ -28,6 +28,7 @@ function checkMobileOrientation() {
     document.getElementById("mobileAlert").classList.add("d-none");
 
     checkFullscreen();
+    showMobileButtons();
   }
 }
 
@@ -35,6 +36,10 @@ function checkFullscreen() {
   if (!document.fullscreenElement) {
     document.getElementById("fullscreenalert").classList.remove("d-none");
   }
+}
+
+function showMobileButtons() {
+  document.getElementById("play-btns-container").classList.remove("d-none");
 }
 
 window.addEventListener("orientationchange", checkMobileOrientation);
@@ -166,6 +171,15 @@ function toggleFullscreen() {
     enterFullscreen(gamebox, screenicon, endscreen, startscreen);
   } else {
     exitFullscreenMode(gamebox, screenicon, endscreen, startscreen);
+  }
+}
+
+function toggleInfo(infoStatus) {
+  let infocontainer = document.getElementById("infocontainer");
+  if (infoStatus == "false") {
+    infocontainer.classList.remove("d-none");
+  } else {
+    infocontainer.classList.add("d-none");
   }
 }
 
